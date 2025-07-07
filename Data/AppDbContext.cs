@@ -7,6 +7,8 @@ namespace HeavenlyHR.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Employee> Employees { get; set; } // 對應到資料表
+        public DbSet<Employee> Employees { get; set; } // 員工資料表
+
+        public DbSet<EmployeeChange> EmployeeChanges { get; set; } // 員工異動資料表
     }
 }

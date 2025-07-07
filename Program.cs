@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HeavenlyHR.Repositories;
+using HeavenlyHR.Services;
 
 var services = new ServiceCollection();
 
@@ -17,32 +18,93 @@ var connectionString = configuration.GetConnectionString("DefaultConnection");
 // 註冊 AppDbContext（使用 MySQL）
 services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// 註冊 Repository
 services.AddScoped<EmployeeRepository>();
+services.AddScoped<EmployeeChangeRepository>();
+
+// 註冊 Service
+services.AddScoped<EmployeeService>();
+services.AddScoped<EmployeeChangeService>();
+services.AddScoped<ExportService>();
 
 
 // 建立 ServiceProvider，日後可取出 DbContext 使用
 var serviceProvider = services.BuildServiceProvider();
 
-// 測試是否成功連線
+// 使用 scope 來取得服務並執行
 using (var scope = serviceProvider.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var repo = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+    var service = scope.ServiceProvider.GetRequiredService<EmployeeService>();
+    var changeService = scope.ServiceProvider.GetRequiredService<EmployeeChangeService>();
+    var exportService = scope.ServiceProvider.GetRequiredService<ExportService>();
+    Console.WriteLine("\n正在匯出員工資料到 CSV...");
+    await exportService.ExportEmployeesToCsvFileAsync("employees_export.csv");
+    Console.WriteLine("匯出完成！檔案位置：employees_export.csv");
 
-    Console.WriteLine(" 從資料庫讀取員工資料...");
+    
+
+    Console.WriteLine(" 從資料庫讀取員工資料（直接使用 Repository）...");
 
     try
     {
-        var employees = await repo.GetAllAsync();
+        var employeesFromRepo = await repo.GetAllAsync();
 
-        Console.WriteLine($" 共找到 {employees.Count} 筆員工資料：");
-        foreach (var emp in employees)
+        Console.WriteLine($" 共找到 {employeesFromRepo.Count} 筆員工資料：");
+        foreach (var emp in employeesFromRepo)
         {
             Console.WriteLine($"  {emp.FullName} - 到職日: {emp.HireDate.ToShortDateString()}");
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($" 發生錯誤：{ex.Message}");
+        Console.WriteLine($" 發生錯誤（Repository）：{ex.Message}");
+    }
+
+    Console.WriteLine("\n 從服務層讀取員工資料（使用 EmployeeService）...");
+
+    try
+    {
+        var employeesFromService = await service.GetAllAsync();
+
+        Console.WriteLine($" 共找到 {employeesFromService.Count} 筆員工資料：");
+        foreach (var emp in employeesFromService)
+        {
+            Console.WriteLine($"  {emp.FullName} - 到職日: {emp.HireDate.ToShortDateString()}");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($" 發生錯誤（Service）：{ex.Message}");
+    }
+
+    Console.WriteLine("\n新增一筆員工異動紀錄測試...");
+
+    var newChange = new HeavenlyHR.Models.EmployeeChange
+    {
+        EmployeeId = 1, // 請改成你資料庫中確實存在的員工ID
+        ChangeType = HeavenlyHR.Models.ChangeType.離職,
+        ChangeMethod = HeavenlyHR.Models.ChangeMethod.手動,
+        EffectiveDate = new DateTime(2025, 7, 10),
+        ApprovalDate = new DateTime(2025, 7, 5),
+        ApplicationDate = new DateTime(2025, 7, 1),
+        ChangeReason = HeavenlyHR.Models.ChangeReason.退休,
+        Remark = "員工自願退休"
+    };
+
+    try
+    {
+        await changeService.AddAsync(newChange);
+        Console.WriteLine("異動紀錄新增成功！");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"新增異動紀錄失敗：{ex.Message}");
+        if (ex.InnerException != null)
+        {
+            Console.WriteLine($"詳細錯誤：{ex.InnerException.Message}");
+        }
     }
 }
