@@ -3,3 +3,25 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+# appsettings Development files
+appsettings.Development.json
+
+# Logs
+*.log
+
+# Backup & temporary files
+*.backup
+*.tmp
+*.temp
+
+# macOS 系統檔案
+.DS_Store
+
+# Windows 系統檔案
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Code coverage
+coverage/
+coverage.*.json
