@@ -57,4 +57,8 @@ public class Employee
     public string CompanyEmail { get; set; }  // 電子郵件(公司)
 
     public string PersonalEmail { get; set; }  // 電子郵件(個人)
+    
+    public int? CandidateId { get; set; }  // Nullable，因不是每個員工都來自人才庫
+    public Candidate Candidate { get; set; } 
+
 }

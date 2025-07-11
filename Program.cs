@@ -22,12 +22,13 @@ services.AddDbContext<AppDbContext>(options =>
 // 註冊 Repository
 services.AddScoped<EmployeeRepository>();
 services.AddScoped<EmployeeChangeRepository>();
+services.AddScoped<CandidateRepository>();
 
 // 註冊 Service
 services.AddScoped<EmployeeService>();
 services.AddScoped<EmployeeChangeService>();
 services.AddScoped<ExportService>();
-
+services.AddScoped<CandidateService>();
 
 // 建立 ServiceProvider，日後可取出 DbContext 使用
 var serviceProvider = services.BuildServiceProvider();
@@ -40,14 +41,13 @@ using (var scope = serviceProvider.CreateScope())
     var service = scope.ServiceProvider.GetRequiredService<EmployeeService>();
     var changeService = scope.ServiceProvider.GetRequiredService<EmployeeChangeService>();
     var exportService = scope.ServiceProvider.GetRequiredService<ExportService>();
+    var candidateService = scope.ServiceProvider.GetRequiredService<CandidateService>();
     Console.WriteLine("\n正在匯出員工資料到 CSV...");
     await exportService.ExportEmployeesToCsvFileAsync("employees_export.csv");
     Console.WriteLine("匯出完成！檔案位置：employees_export.csv");
-
-    
-
     Console.WriteLine(" 從資料庫讀取員工資料（直接使用 Repository）...");
-
+    Console.WriteLine("\n從資料庫讀取候選人資料（使用 CandidateService）...");
+    
     try
     {
         var employeesFromRepo = await repo.GetAllAsync();
@@ -106,5 +106,19 @@ using (var scope = serviceProvider.CreateScope())
         {
             Console.WriteLine($"詳細錯誤：{ex.InnerException.Message}");
         }
+    }
+    
+    try
+    {
+        var candidates = await candidateService.GetAllAsync();
+        Console.WriteLine($"共找到 {candidates.Count} 筆候選人資料：");
+        foreach (var c in candidates)
+        {
+            Console.WriteLine($"  {c.FullName} - 職位申請: {c.AppliedPosition} - 狀態: {c.Status}");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"讀取候選人資料失敗：{ex.Message}");
     }
 }
