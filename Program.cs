@@ -23,12 +23,14 @@ services.AddDbContext<AppDbContext>(options =>
 services.AddScoped<EmployeeRepository>();
 services.AddScoped<EmployeeChangeRepository>();
 services.AddScoped<CandidateRepository>();
+services.AddScoped<StaffingPlanRepository>();
 
 // 註冊 Service
 services.AddScoped<EmployeeService>();
 services.AddScoped<EmployeeChangeService>();
 services.AddScoped<ExportService>();
 services.AddScoped<CandidateService>();
+services.AddScoped<StaffingPlanService>();
 
 // 建立 ServiceProvider，日後可取出 DbContext 使用
 var serviceProvider = services.BuildServiceProvider();
@@ -120,5 +122,25 @@ using (var scope = serviceProvider.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"讀取候選人資料失敗：{ex.Message}");
+    }
+    
+    var staffingPlanService = scope.ServiceProvider.GetRequiredService<StaffingPlanService>();
+
+    Console.WriteLine("\n從服務層讀取編制人力資料...");
+
+    try
+    {
+        var staffingPlans = await staffingPlanService.GetAllAsync();
+
+        Console.WriteLine($" 共找到 {staffingPlans.Count} 筆編制資料：");
+
+        foreach (var plan in staffingPlans)
+        {
+            Console.WriteLine($" 年度: {plan.Year}, 部門: {plan.DepartmentName}, 職務: {plan.JobTitle}, 需求人數: {plan.PlannedHeadcount}");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($" 發生錯誤（StaffingPlanService）：{ex.Message}");
     }
 }

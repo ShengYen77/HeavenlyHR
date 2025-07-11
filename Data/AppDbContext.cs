@@ -12,6 +12,9 @@ namespace HeavenlyHR.Data
         public DbSet<EmployeeChange> EmployeeChanges { get; set; } // 員工異動資料表
         
         public DbSet<Candidate> Candidates { get; set; }  //候選人資料表
+        
+        public DbSet<StaffingPlan> StaffingPlans { get; set; } //編制資料表
+
 
     }
 }
