@@ -43,5 +43,26 @@ namespace HeavenlyHR.Services
         {
             return _employeeRepository.DeleteAsync(id);
         }
+        
+        //計算勞保邏輯
+        public async Task<List<Employee>> GetAllWithContributionsAsync()
+        {
+            var employees = await _employeeRepository.GetAllWithLaborInsuranceAsync();
+
+            foreach (var emp in employees)
+            {
+                if (emp.LaborInsuranceGrade != null)
+                {
+                    emp.InsuredSalary = emp.LaborInsuranceGrade.InsuredSalary;
+                    emp.EmployeeContribution = Math.Round(emp.LaborInsuranceGrade.InsuredSalary * emp.LaborInsuranceGrade.EmployeeRate * emp.LaborInsuranceGrade.InsuranceRate);
+                    emp.EmployerContribution = Math.Round(emp.LaborInsuranceGrade.InsuredSalary * emp.LaborInsuranceGrade.EmployerRate * emp.LaborInsuranceGrade.InsuranceRate);
+                    emp.GovernmentContribution = Math.Round(emp.LaborInsuranceGrade.InsuredSalary * emp.LaborInsuranceGrade.GovernmentRate * emp.LaborInsuranceGrade.InsuranceRate);
+                }
+            }
+
+            return employees;
+        }
+
+
     }
 }

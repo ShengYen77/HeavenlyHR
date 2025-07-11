@@ -26,8 +26,8 @@ Heavenly : 傳達出系統的卓越性和非凡價值，強調其在人才管理
   - 編制數 **StaffingPlan**
 - 考勤管理：全面監控考勤狀況，簡化加班和請假流程。
   - 考勤紀錄 **AttendanceRecord**
-- 薪資管理：自動化薪資計算及各類保險的管理，確保準確性和合規性。(待開發)
-
+- 薪資管理：自動化薪資計算及各類保險的管理，確保準確性和合規性。
+  - 勞工保險計算 **LaborInsuranceGrade**
 - 績效管理：幫助企業設定目標、進行360度反饋，提升員工績效。(待開發)
 
 - 訓練管理：規劃和管理員工的培訓與學習歷程，促進專業成長。(待開發)
@@ -72,6 +72,8 @@ HeavenlyHR/
 │ └── StaffingPlanService.cs
 │ └── AttendanceRecordService.cs
 │ └── LaborInsuranceService.cs
+│ └── ILaborInsuranceService.cs
+│ └── LaborInsuranceDbService.cs
 ├── Utils/
 │ └── AttendanceChecker.cs
 │ └── ShiftScheduleProvider.cs

@@ -33,6 +33,7 @@ services.AddScoped<ExportService>();
 services.AddScoped<CandidateService>();
 services.AddScoped<StaffingPlanService>();
 services.AddScoped<AttendanceRecordService>();
+services.AddScoped<ILaborInsuranceService, LaborInsuranceDbService>();
 
 // 建立 ServiceProvider，日後可取出 DbContext 使用
 var serviceProvider = services.BuildServiceProvider();
@@ -171,4 +172,29 @@ using (var scope = serviceProvider.CreateScope())
     Console.WriteLine($"雇主負擔：{laborService.CalculateEmployerContribution(salary)} 元");
     Console.WriteLine($"政府負擔：{laborService.CalculateGovernmentContribution(salary)} 元");
     
+    
+    var laborDbService = scope.ServiceProvider.GetRequiredService<ILaborInsuranceService>();
+
+    Console.WriteLine("\n=== DB版勞保計算 ===");
+
+    try
+    {
+        // 取得所有員工及勞保級距
+        var employeesWithContributions = await laborDbService.GetAllEmployeesWithContributionsAsync();
+
+        foreach (var emp in employeesWithContributions)
+        {
+            Console.WriteLine($"員工：{emp.FullName}");
+            Console.WriteLine($"  投保薪資：{emp.InsuredSalary:N2}");
+            Console.WriteLine($"  員工自付：{emp.EmployeeContribution:N0} 元");
+            Console.WriteLine($"  雇主負擔：{emp.EmployerContribution:N0} 元");
+            Console.WriteLine($"  政府負擔：{emp.GovernmentContribution:N0} 元");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"計算 DB 版勞保時發生錯誤：{ex.Message}");
+    }
+
+
 }

@@ -1,7 +1,9 @@
 ﻿namespace HeavenlyHR.Models;
 
+using System.ComponentModel.DataAnnotations;
 public class LaborInsuranceGrade
 {
+    [Key]
     public int Level { get; set; }                   // 等級（第幾級）
     public decimal SalaryFrom { get; set; }          // 月薪資下限
     public decimal SalaryTo { get; set; }            // 月薪資上限
@@ -11,4 +13,5 @@ public class LaborInsuranceGrade
     public decimal GovernmentRate { get; set; }      // 政府負擔比率（例：0.1 = 10%）
     
     public decimal InsuranceRate { get; set; } = 0.12m; // 新增費率（例如 0.12 表示 12%）
+    
 }

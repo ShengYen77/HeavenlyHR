@@ -60,5 +60,12 @@ public class Employee
     
     public int? CandidateId { get; set; }  // Nullable，因不是每個員工都來自人才庫
     public Candidate Candidate { get; set; } 
+    
+    public int? LaborInsuranceGradeId { get; set; } // 對應 LaborInsuranceGrade.Level
+    public LaborInsuranceGrade LaborInsuranceGrade { get; set; }
 
+    public decimal? InsuredSalary { get; set; }           // 投保薪資
+    public decimal? EmployeeContribution { get; set; }    // 員工自付額
+    public decimal? EmployerContribution { get; set; }    // 雇主負擔額
+    public decimal? GovernmentContribution { get; set; }  // 政府負擔額
 }

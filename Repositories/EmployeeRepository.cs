@@ -52,5 +52,14 @@ namespace HeavenlyHR.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        
+        //抓取員工資料並包含LaborInsuranceGrade
+        public async Task<List<Employee>> GetAllWithLaborInsuranceAsync()
+        {
+            return await _context.Employees
+                .Include(e => e.LaborInsuranceGrade) // 確保載入勞保級距
+                .ToListAsync();
+        }
+
     }
 }
