@@ -51,7 +51,10 @@ HeavenlyHR/
 │ └── EmployeeChange.cs
 │ └── Candidate.cs
 │ └── StaffingPlan.cs
+│ └── ShiftSchedule.cs
 │ └── AttendanceRecord.cs
+│ └── EmployeeSalary.cs
+│ └── LaborInsuranceGrade.cs
 ├── Data/
 │ └── AppDbContext.cs
 ├── Repositories/
@@ -68,8 +71,15 @@ HeavenlyHR/
 │ └── CandidateService.cs
 │ └── StaffingPlanService.cs
 │ └── AttendanceRecordService.cs
+│ └── LaborInsuranceService.cs
+├── Utils/
+│ └── AttendanceChecker.cs
+│ └── ShiftScheduleProvider.cs
+│ └── TestDataSeeder.cs
 ├── Helpers/
 │ └── CsvExporter.cs
+├── Controllers/
+│ └── EmployeeController.cs
 ├── Program.cs
 └── appsettings.json
 ```

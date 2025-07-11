@@ -1,5 +1,6 @@
 ﻿using HeavenlyHR.Models;
 using HeavenlyHR.Repositories;
+using HeavenlyHR.Utils;
 
 namespace HeavenlyHR.Services
 {
@@ -34,12 +35,19 @@ namespace HeavenlyHR.Services
 
         public async Task AddAsync(AttendanceRecord record)
         {
+            //新增前判斷是否異常
+            var shiftSchedules = ShiftScheduleProvider.GetShiftSchedules();
+            record.IsAbnormal = AttendanceChecker.CheckIsAbnormal(record, shiftSchedules);
             await _repository.AddAsync(record);
         }
 
         public async Task UpdateAsync(AttendanceRecord record)
         {
+            // 更新前判斷是否異常
+            var shiftSchedules = ShiftScheduleProvider.GetShiftSchedules();
+            record.IsAbnormal = AttendanceChecker.CheckIsAbnormal(record, shiftSchedules);
             await _repository.UpdateAsync(record);
+
         }
 
         public async Task DeleteAsync(int id)

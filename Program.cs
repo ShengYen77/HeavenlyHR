@@ -161,4 +161,14 @@ using (var scope = serviceProvider.CreateScope())
     {
         Console.WriteLine($"發生錯誤（AttendanceRecordService）：{ex.Message}");
     }
+    
+    var laborService = new LaborInsuranceService();
+    var salary = 45000m;
+
+    Console.WriteLine($"原始薪資：{salary}");
+    Console.WriteLine($"投保薪資：{laborService.GetInsuredSalary(salary)}");
+    Console.WriteLine($"員工自付：{laborService.CalculateEmployeeContribution(salary)} 元");
+    Console.WriteLine($"雇主負擔：{laborService.CalculateEmployerContribution(salary)} 元");
+    Console.WriteLine($"政府負擔：{laborService.CalculateGovernmentContribution(salary)} 元");
+    
 }
