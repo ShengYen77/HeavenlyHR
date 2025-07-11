@@ -15,6 +15,8 @@ namespace HeavenlyHR.Data
         
         public DbSet<StaffingPlan> StaffingPlans { get; set; } //編制資料表
 
+        public DbSet<AttendanceRecord> AttendanceRecords { get; set; }
+
 
     }
 }

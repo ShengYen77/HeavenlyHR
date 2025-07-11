@@ -24,6 +24,7 @@ services.AddScoped<EmployeeRepository>();
 services.AddScoped<EmployeeChangeRepository>();
 services.AddScoped<CandidateRepository>();
 services.AddScoped<StaffingPlanRepository>();
+services.AddScoped<IAttendanceRecordRepository, AttendanceRecordRepository>();
 
 // 註冊 Service
 services.AddScoped<EmployeeService>();
@@ -31,6 +32,7 @@ services.AddScoped<EmployeeChangeService>();
 services.AddScoped<ExportService>();
 services.AddScoped<CandidateService>();
 services.AddScoped<StaffingPlanService>();
+services.AddScoped<AttendanceRecordService>();
 
 // 建立 ServiceProvider，日後可取出 DbContext 使用
 var serviceProvider = services.BuildServiceProvider();
@@ -44,11 +46,13 @@ using (var scope = serviceProvider.CreateScope())
     var changeService = scope.ServiceProvider.GetRequiredService<EmployeeChangeService>();
     var exportService = scope.ServiceProvider.GetRequiredService<ExportService>();
     var candidateService = scope.ServiceProvider.GetRequiredService<CandidateService>();
+    var attendanceService = scope.ServiceProvider.GetRequiredService<AttendanceRecordService>();
     Console.WriteLine("\n正在匯出員工資料到 CSV...");
     await exportService.ExportEmployeesToCsvFileAsync("employees_export.csv");
     Console.WriteLine("匯出完成！檔案位置：employees_export.csv");
     Console.WriteLine(" 從資料庫讀取員工資料（直接使用 Repository）...");
     Console.WriteLine("\n從資料庫讀取候選人資料（使用 CandidateService）...");
+    Console.WriteLine("\n從服務層讀取考勤紀錄資料...");
     
     try
     {
@@ -142,5 +146,19 @@ using (var scope = serviceProvider.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($" 發生錯誤（StaffingPlanService）：{ex.Message}");
+    }
+    try
+    {
+        var records = await attendanceService.GetAllAsync();
+        Console.WriteLine($"共找到 {records.Count()} 筆考勤資料：");
+
+        foreach(var r in records)
+        {
+            Console.WriteLine($"  員工編號: {r.EmployeeId}, 日期: {r.Date.ToShortDateString()}, 上班: {r.Clock_In_Time}, 下班: {r.Clock_Out_Time}, 異常: {r.IsAbnormal}");
+        }
+    }
+    catch(Exception ex)
+    {
+        Console.WriteLine($"發生錯誤（AttendanceRecordService）：{ex.Message}");
     }
 }

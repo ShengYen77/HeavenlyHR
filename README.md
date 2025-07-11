@@ -22,11 +22,10 @@ Heavenly : 傳達出系統的卓越性和非凡價值，強調其在人才管理
   - 將目前所有員工資料匯出為 `employees_export.csv`
   - 自動產出於執行目錄中，方便後續報表或備份使用
 - 招募管理：有效管理人才庫和編制，確保招募流程的順暢。
-  - 人才庫 **Candidate** (已開發)
-  - 編制數 **StaffingPlan**(已開發)
- 
-- 考勤管理：全面監控考勤狀況，簡化加班和請假流程。(待開發)
-
+  - 人才庫 **Candidate**
+  - 編制數 **StaffingPlan**
+- 考勤管理：全面監控考勤狀況，簡化加班和請假流程。
+  - 考勤紀錄 **AttendanceRecord**
 - 薪資管理：自動化薪資計算及各類保險的管理，確保準確性和合規性。(待開發)
 
 - 績效管理：幫助企業設定目標、進行360度反饋，提升員工績效。(待開發)
@@ -50,15 +49,25 @@ HeavenlyHR/
 ├── Models/
 │ └── Employee.cs
 │ └── EmployeeChange.cs
+│ └── Candidate.cs
+│ └── StaffingPlan.cs
+│ └── AttendanceRecord.cs
 ├── Data/
 │ └── AppDbContext.cs
 ├── Repositories/
 │ └── EmployeeRepository.cs
 │ └── EmployeeChangeRepository.cs
+│ └── CandidateRepository.cs
+│ └── StaffingPlanRepository.cs
+│ └── AttendanceRecordRepository.cs
+│ └── IAttendanceRecordRepository.cs
 ├── Services/
 │ └── EmployeeService.cs
 │ └── EmployeeChangeService.cs
 │ └── ExportService.cs
+│ └── CandidateService.cs
+│ └── StaffingPlanService.cs
+│ └── AttendanceRecordService.cs
 ├── Helpers/
 │ └── CsvExporter.cs
 ├── Program.cs
